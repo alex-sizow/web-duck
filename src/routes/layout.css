@@ -1,0 +1,28 @@
+:root {
+  --background-color: white;
+  --text-color: #ffffff;
+  --accent-color: #007bff;
+}
+
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-color: #000000;
+    --text-color: #ffffff;
+    --accent-color: #007bff;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --background-color: white;
+    --text-color: #ffffff;
+    --accent-color: #007bff;
+  }
+}
+
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}

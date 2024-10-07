@@ -12,35 +12,87 @@
 		<button
 			class="theme-switcher__button"
 			aria-pressed={currentTheme === theme}
+			value={theme}
 			on:click={() => setTheme(theme)}
 		>
 			{theme}
 		</button>
 	{/each}
+	<div class="theme-switcher__status"></div>
 </section>
 
 <style>
 	.theme-switcher {
-		display: flex;
-		gap: 10px;
-		border-radius: 20px;
-		border: 1px solid white;
+		--theme-switcher-hover-back: hsl(var(--color-sulu));
+		--theme-switcher-hover-text: hsl(var(--color-ebony));
+
+		position: relative;
+		z-index: 1;
+		display: inline-grid;
+		grid-template-columns: repeat(3, 1fr);
 		padding: 2px;
+		border: 2px solid var(--theme-switcher-back);
+		border-radius: 24px;
 	}
 
+	/* Button */
+
 	.theme-switcher__button {
-		padding: 2px 15px;
-		border-radius: 20px;
-		color: white;
+		margin: 0;
+		padding: 0;
+		padding-inline: 16px;
 		border: none;
-		text-transform: capitalize;
-		&:hover {
-			background-color: var(--accent-color);
-		}
+		border-radius: 24px;
+		background-color: transparent;
+		color: var(--theme-switcher-back);
+		line-height: inherit;
+		font-size: inherit;
+		font-family: inherit;
+		transition: color 0.1s linear 0.1s;
 
 		&[aria-pressed='true'] {
-			background-color: white;
-			color: black;
+			outline-offset: 2px;
+			color: var(--theme-switcher-text);
+		}
+
+		@media (hover: hover) and (pointer: fine) {
+			&[aria-pressed='false']:hover {
+				animation: menu-button 0.2s both;
+			}
+		}
+
+		&:focus-visible {
+			outline-offset: -2px;
+		}
+	}
+
+	@keyframes menu-button {
+		to {
+			background-color: var(--theme-switcher-hover-back);
+			color: var(--theme-switcher-hover-text);
+		}
+	}
+
+	/* Status */
+
+	.theme-switcher__status {
+		position: absolute;
+		inset: 2px;
+		z-index: -1;
+		margin-inline: auto;
+		width: calc(33% - 0.5px);
+		border-radius: 24px;
+		background-color: var(--theme-switcher-back);
+		pointer-events: none;
+		transform: translateX(0);
+		transition: transform 0.2s;
+
+		.theme-switcher__button[aria-pressed='true'][value='light'] ~ & {
+			transform: translateX(-100%);
+		}
+
+		.theme-switcher__button[aria-pressed='true'][value='dark'] ~ & {
+			transform: translateX(100%);
 		}
 	}
 </style>

@@ -1,19 +1,90 @@
 <script>
-	let currentTheme = 'light';
+	import { onMount } from 'svelte';
 
-	function setTheme(theme) {
-		currentTheme = theme;
-		localStorage.setItem('theme', currentTheme === 'dark' ? 'dark' : 'light');
+	export let themes = ['auto', 'light', 'dark'];
+	export let currentTheme = 'auto';
+
+	function setupSwitcher() {
+		const savedScheme = getSavedScheme();
+
+		if (savedScheme !== null) {
+			currentTheme = savedScheme;
+		}
+
+		updateMediaQueries();
 	}
+
+	function handleThemeChange(event) {
+		const newTheme = event.currentTarget.value;
+		currentTheme = newTheme;
+		setScheme(newTheme);
+	}
+
+	function setScheme(scheme) {
+		switchMedia(scheme);
+
+		if (scheme === 'auto') {
+			clearScheme();
+		} else {
+			saveScheme(scheme);
+		}
+	}
+
+	function switchMedia(scheme) {
+		let lightMedia;
+		let darkMedia;
+
+		if (scheme === 'auto') {
+			lightMedia = '(prefers-color-scheme: light)';
+			darkMedia = '(prefers-color-scheme: dark)';
+		} else {
+			lightMedia = scheme === 'light' ? 'all' : 'not all';
+			darkMedia = scheme === 'dark' ? 'all' : 'not all';
+		}
+
+		lightStyle.media = lightMedia;
+		darkStyle.media = darkMedia;
+
+		lightTheme.content = scheme === 'light' ? '#ffffff' : '#000000';
+		darkTheme.content = scheme === 'dark' ? '#000000' : '#ffffff';
+	}
+
+	function getSavedScheme() {
+		return localStorage.getItem('color-scheme');
+	}
+
+	function saveScheme(scheme) {
+		localStorage.setItem('color-scheme', scheme);
+	}
+
+	function clearScheme() {
+		localStorage.removeItem('color-scheme');
+	}
+
+	function updateMediaQueries() {
+		switchMedia(currentTheme);
+	}
+
+	onMount(() => {
+		setupSwitcher();
+	});
 </script>
 
-<section class="theme-switcher">
-	{#each ['light', 'auto', 'dark'] as theme}
+$app/stores;
+
+<meta name="theme-color" bind:this={themeColor} />
+
+<section
+	class="theme-switcher"
+	class:light={currentTheme === 'light'}
+	class:dark={currentTheme === 'dark'}
+>
+	{#each themes as theme}
 		<button
 			class="theme-switcher__button"
-			aria-pressed={currentTheme === theme}
+			aria-pressed={currentTheme === theme ? 'true' : 'false'}
 			value={theme}
-			on:click={() => setTheme(theme)}
+			on:click={handleThemeChange}
 		>
 			{theme}
 		</button>
@@ -22,6 +93,16 @@
 </section>
 
 <style>
+	:global(body.light) {
+		--theme-switcher-back: hsl(var(--color-sulu));
+		--theme-switcher-text: hsl(var(--color-ebony));
+	}
+
+	:global(body.dark) {
+		--theme-switcher-back: hsl(var(--color-ebony));
+		--theme-switcher-text: hsl(var(--color-sulu));
+	}
+
 	.theme-switcher {
 		--theme-switcher-hover-back: hsl(var(--color-sulu));
 		--theme-switcher-hover-text: hsl(var(--color-ebony));

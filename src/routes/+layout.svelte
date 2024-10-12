@@ -5,8 +5,13 @@
 
 <main>
 	<Header />
+
 	<slot />
 </main>
 
 <style global>
+	.error {
+		color: red;
+		font-weight: bold;
+	}
 </style>

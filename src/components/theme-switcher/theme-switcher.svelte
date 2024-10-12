@@ -1,18 +1,17 @@
 <script>
 	import { onMount } from 'svelte';
 
-	export let themes = ['auto', 'light', 'dark'];
+	export let themes = ['light', 'auto', 'dark'];
 	export let currentTheme = 'auto';
 
-	function setupSwitcher() {
-		const savedScheme = getSavedScheme();
+	let styleElement;
 
-		if (savedScheme !== null) {
-			currentTheme = savedScheme;
-		}
-
-		updateMediaQueries();
-	}
+	onMount(() => {
+		// Создаем styleElement только на клиентской стороне
+		styleElement = document.createElement('style');
+		document.head.appendChild(styleElement);
+		setupSwitcher();
+	});
 
 	function handleThemeChange(event) {
 		const newTheme = event.currentTarget.value;
@@ -21,64 +20,105 @@
 	}
 
 	function setScheme(scheme) {
-		switchMedia(scheme);
-
 		if (scheme === 'auto') {
 			clearScheme();
 		} else {
 			saveScheme(scheme);
 		}
-	}
-
-	function switchMedia(scheme) {
-		let lightMedia;
-		let darkMedia;
-
-		if (scheme === 'auto') {
-			lightMedia = '(prefers-color-scheme: light)';
-			darkMedia = '(prefers-color-scheme: dark)';
-		} else {
-			lightMedia = scheme === 'light' ? 'all' : 'not all';
-			darkMedia = scheme === 'dark' ? 'all' : 'not all';
-		}
-
-		lightStyle.media = lightMedia;
-		darkStyle.media = darkMedia;
-
-		lightTheme.content = scheme === 'light' ? '#ffffff' : '#000000';
-		darkTheme.content = scheme === 'dark' ? '#000000' : '#ffffff';
+		updateTheme();
 	}
 
 	function getSavedScheme() {
-		return localStorage.getItem('color-scheme');
+		try {
+			return localStorage.getItem('color-scheme');
+		} catch (e) {
+			console.warn('localStorage недоступен:', e);
+			return null;
+		}
 	}
 
 	function saveScheme(scheme) {
-		localStorage.setItem('color-scheme', scheme);
+		try {
+			localStorage.setItem('color-scheme', scheme);
+		} catch (e) {
+			console.warn('Не удалось сохранить схему в localStorage:', e);
+		}
 	}
 
 	function clearScheme() {
-		localStorage.removeItem('color-scheme');
+		try {
+			localStorage.removeItem('color-scheme');
+		} catch (e) {
+			console.warn('Не удалось очистить схему из localStorage:', e);
+		}
 	}
 
-	function updateMediaQueries() {
-		switchMedia(currentTheme);
+	function updateTheme() {
+		let cssContent = `
+      :root {
+        --background-color: white;
+        --text-color: black;
+        --accent-color: #007bff;
+        --theme-switcher-back: black;
+      }
+      
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --background-color: black;
+          --text-color: white;
+          --accent-color: #007bff;
+          --theme-switcher-back: white;
+        }
+      }
+      
+      @media (prefers-color-scheme: light) {
+        :root {
+          --background-color: white;
+          --text-color: black;
+          --accent-color: #007bff;
+          --theme-switcher-back: black;
+        }
+      }
+    `;
+
+		if (currentTheme === 'dark') {
+			cssContent += `
+        :root {
+          --background-color: black;
+          --text-color: white;
+          --accent-color: #007bff;
+          --theme-switcher-back: white;
+        }
+      `;
+		} else if (currentTheme === 'light') {
+			cssContent += `
+        :root {
+          --background-color: white;
+          --text-color: black;
+          --accent-color: #007bff;
+          --theme-switcher-back: black;
+        }
+      `;
+		}
+
+		// Обновляем стили только ��сли styleElement существует
+		if (styleElement) {
+			styleElement.textContent = cssContent;
+		}
 	}
 
-	onMount(() => {
-		setupSwitcher();
-	});
+	function setupSwitcher() {
+		const savedScheme = getSavedScheme();
+
+		if (savedScheme !== null) {
+			currentTheme = savedScheme;
+		}
+
+		updateTheme();
+	}
 </script>
 
-$app/stores;
-
-<meta name="theme-color" bind:this={themeColor} />
-
-<section
-	class="theme-switcher"
-	class:light={currentTheme === 'light'}
-	class:dark={currentTheme === 'dark'}
->
+<section class="theme-switcher">
 	{#each themes as theme}
 		<button
 			class="theme-switcher__button"
@@ -89,24 +129,10 @@ $app/stores;
 			{theme}
 		</button>
 	{/each}
-	<div class="theme-switcher__status"></div>
 </section>
 
 <style>
-	:global(body.light) {
-		--theme-switcher-back: hsl(var(--color-sulu));
-		--theme-switcher-text: hsl(var(--color-ebony));
-	}
-
-	:global(body.dark) {
-		--theme-switcher-back: hsl(var(--color-ebony));
-		--theme-switcher-text: hsl(var(--color-sulu));
-	}
-
 	.theme-switcher {
-		--theme-switcher-hover-back: hsl(var(--color-sulu));
-		--theme-switcher-hover-text: hsl(var(--color-ebony));
-
 		position: relative;
 		z-index: 1;
 		display: inline-grid;
@@ -115,8 +141,6 @@ $app/stores;
 		border: 2px solid var(--theme-switcher-back);
 		border-radius: 24px;
 	}
-
-	/* Button */
 
 	.theme-switcher__button {
 		margin: 0;
@@ -133,7 +157,7 @@ $app/stores;
 
 		&[aria-pressed='true'] {
 			outline-offset: 2px;
-			color: var(--theme-switcher-text);
+			color: var(--text-color);
 		}
 
 		@media (hover: hover) and (pointer: fine) {
@@ -149,31 +173,8 @@ $app/stores;
 
 	@keyframes menu-button {
 		to {
-			background-color: var(--theme-switcher-hover-back);
-			color: var(--theme-switcher-hover-text);
-		}
-	}
-
-	/* Status */
-
-	.theme-switcher__status {
-		position: absolute;
-		inset: 2px;
-		z-index: -1;
-		margin-inline: auto;
-		width: calc(33% - 0.5px);
-		border-radius: 24px;
-		background-color: var(--theme-switcher-back);
-		pointer-events: none;
-		transform: translateX(0);
-		transition: transform 0.2s;
-
-		.theme-switcher__button[aria-pressed='true'][value='light'] ~ & {
-			transform: translateX(-100%);
-		}
-
-		.theme-switcher__button[aria-pressed='true'][value='dark'] ~ & {
-			transform: translateX(100%);
+			background-color: var(--theme-switcher-back);
+			color: var(--text-color);
 		}
 	}
 </style>

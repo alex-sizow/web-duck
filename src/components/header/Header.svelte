@@ -19,7 +19,9 @@
 		width: 100%;
 		height: 60px;
 		border-radius: 0 0 12px 12px;
-		background-color: black;
+		backdrop-filter: blur(16px) saturate(180%);
+		-webkit-backdrop-filter: blur(16px) saturate(180%);
+		background-color: rgba(17, 25, 40, 0.75);
 		display: grid;
 		grid-template-columns: min-content auto;
 		column-gap: 40px;

@@ -64,7 +64,7 @@
       
       @media (prefers-color-scheme: dark) {
         :root {
-          --background-color: black;
+          --background-color: linear-gradient(118deg, rgba(186,187,2,1) 0%, rgba(0,0,0,1) 62%, rgba(16,120,30,1) 100%);
           --text-color: white;
           --accent-color: #007bff;
           --theme-switcher-back: white;
@@ -73,7 +73,7 @@
       
       @media (prefers-color-scheme: light) {
         :root {
-          --background-color: white;
+          --background-color: linear-gradient(118deg, rgba(186,187,2,1) 0%, rgba(197,233,234,1) 62%, rgba(16,120,30,1) 100%);
           --text-color: black;
           --accent-color: #007bff;
           --theme-switcher-back: black;
@@ -84,24 +84,27 @@
 		if (currentTheme === 'dark') {
 			cssContent += `
         :root {
-          --background-color: black;
+          --background-color: rgb(186,187,2);
+					--background-gradient: linear-gradient(118deg, rgba(186,187,2,1) 0%, rgba(0,0,0,1) 62%, rgba(16,120,30,1) 100%);
           --text-color: white;
           --accent-color: #007bff;
           --theme-switcher-back: white;
+					--theme-color: black;
         }
       `;
 		} else if (currentTheme === 'light') {
 			cssContent += `
         :root {
-          --background-color: white;
+          --background-color: rgb(186,187,2);
+					--background-gradient: linear-gradient(118deg, rgba(186,187,2,1) 0%, rgba(186,224,225,1) 62%, rgba(16,120,30,1) 100%);
           --text-color: black;
           --accent-color: #007bff;
           --theme-switcher-back: black;
+					--theme-color: white;
         }
       `;
 		}
 
-		// Обновляем стили только ��сли styleElement существует
 		if (styleElement) {
 			styleElement.textContent = cssContent;
 		}
@@ -129,6 +132,7 @@
 			{theme}
 		</button>
 	{/each}
+	<div class="theme-switcher__status"></div>
 </section>
 
 <style>
@@ -149,7 +153,7 @@
 		border: none;
 		border-radius: 24px;
 		background-color: transparent;
-		color: var(--theme-switcher-back);
+		color: var(--text-color);
 		line-height: inherit;
 		font-size: inherit;
 		font-family: inherit;
@@ -157,7 +161,7 @@
 
 		&[aria-pressed='true'] {
 			outline-offset: 2px;
-			color: var(--text-color);
+			color: var(--theme-color);
 		}
 
 		@media (hover: hover) and (pointer: fine) {
@@ -175,6 +179,27 @@
 		to {
 			background-color: var(--theme-switcher-back);
 			color: var(--text-color);
+		}
+	}
+
+	.theme-switcher__status {
+		position: absolute;
+		inset: 2px;
+		z-index: -1;
+		margin-inline: auto;
+		width: calc(33% - 0.5px);
+		border-radius: 24px;
+		background-color: var(--theme-switcher-back);
+		pointer-events: none;
+		transform: translateX(0);
+		transition: transform 0.2s;
+
+		.theme-switcher__button[aria-pressed='true'][value='light'] ~ & {
+			transform: translateX(-100%);
+		}
+
+		.theme-switcher__button[aria-pressed='true'][value='dark'] ~ & {
+			transform: translateX(100%);
 		}
 	}
 </style>

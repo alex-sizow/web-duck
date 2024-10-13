@@ -1,5 +1,6 @@
 :root {
-  --background-color: white;
+  --background-color: linear-gradient(118deg, rgba(186, 187, 2, 1) 0%, rgba(197, 233, 234, 1) 62%, rgba(16, 120, 30, 1) 100%);
+  ;
   --text-color: #ffffff;
   --accent-color: #007bff;
   --theme-switcher-back: white;
@@ -8,7 +9,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background-color: #000000;
+    --background-color: red;
     --text-color: #ffffff;
     --accent-color: #007bff;
     --theme-switcher-back: white;
@@ -17,7 +18,8 @@
 
 @media (prefers-color-scheme: light) {
   :root {
-    --background-color: white;
+    --background-color: linear-gradient(118deg, rgba(186, 187, 2, 1) 0%, rgba(197, 233, 234, 1) 62%, rgba(16, 120, 30, 1) 100%);
+    ;
     --text-color: #ffffff;
     --accent-color: #007bff;
     --theme-switcher-back: black;
@@ -27,7 +29,9 @@
 
 body {
   background-color: var(--background-color);
+  background: var(--background-gradient);
   color: var(--text-color);
+  transition: all 1.3s ease-in-out;
 }
 
 /* Добавьте здесь любые другие стили, которые зависят от темы */

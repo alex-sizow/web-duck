@@ -2,14 +2,48 @@
 	import { onMount } from 'svelte';
 
 	export let themes = ['light', 'auto', 'dark'];
-	export let currentTheme = 'auto';
+	export let currentTheme = getSavedScheme() || 'auto';
 
 	let styleElement;
+	let mediaQuery;
 
 	onMount(() => {
 		// Создаем styleElement только на клиентской стороне
 		styleElement = document.createElement('style');
 		document.head.appendChild(styleElement);
+
+		// Инициализация MediaQueryList
+		mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+		function applySystemTheme(isDark) {
+			if (isDark) {
+				currentTheme = 'dark';
+			} else {
+				currentTheme = 'light';
+			}
+			updateTheme();
+		}
+
+		function getSavedScheme() {
+			try {
+				return localStorage.getItem('color-scheme');
+			} catch (e) {
+				console.warn('localStorage недоступен:', e);
+				return null;
+			}
+		}
+
+		// Обработчик изменения цветовой схемы системы
+		const listener = (event) => {
+			if (currentTheme === 'auto') {
+				applySystemTheme(event.matches);
+			}
+		};
+
+		// Используйте addEventListener вместо addListener
+		mediaQuery.addEventListener('change', listener);
+
+		// Инициализ��ция текущей темы
 		setupSwitcher();
 	});
 
@@ -21,7 +55,7 @@
 
 	function setScheme(scheme) {
 		if (scheme === 'auto') {
-			clearScheme();
+			applySystemTheme(mediaQuery.matches);
 		} else {
 			saveScheme(scheme);
 		}
@@ -63,7 +97,7 @@
       }
       
       @media (prefers-color-scheme: dark) {
-        :root {
+      :root {
           --background-color: linear-gradient(118deg, rgba(186,187,2,1) 0%, rgba(0,0,0,1) 62%, rgba(16,120,30,1) 100%);
           --text-color: white;
           --accent-color: #007bff;
@@ -72,35 +106,35 @@
       }
       
       @media (prefers-color-scheme: light) {
-        :root {
+      :root {
           --background-color: linear-gradient(118deg, rgba(186,187,2,1) 0%, rgba(197,233,234,1) 62%, rgba(16,120,30,1) 100%);
           --text-color: black;
           --accent-color: #007bff;
-          --theme-switcher-back: black;
+        --theme-switcher-back: black;
         }
       }
     `;
 
 		if (currentTheme === 'dark') {
 			cssContent += `
-        :root {
+      :root {
           --background-color: rgb(186,187,2);
-					--background-gradient: linear-gradient(118deg, rgba(186,187,2,1) 0%, rgba(0,0,0,1) 62%, rgba(16,120,30,1) 100%);
+          --background-gradient: linear-gradient(118deg, rgba(186,187,2,1) 0%, rgba(0,0,0,1) 62%, rgba(16,120,30,1) 100%);
           --text-color: white;
           --accent-color: #007bff;
           --theme-switcher-back: white;
-					--theme-color: black;
+          --theme-color: black;
         }
       `;
 		} else if (currentTheme === 'light') {
 			cssContent += `
-        :root {
+      :root {
           --background-color: rgb(186,187,2);
-					--background-gradient: linear-gradient(118deg, rgba(186,187,2,1) 0%, rgba(186,224,225,1) 62%, rgba(16,120,30,1) 100%);
+          --background-gradient: linear-gradient(118deg, rgba(186,187,2,1) 0%, rgba(186,224,225,1) 62%, rgba(16,120,30,1) 100%);
           --text-color: black;
           --accent-color: #007bff;
-          --theme-switcher-back: black;
-					--theme-color: white;
+        --theme-switcher-back: black;
+          --theme-color: white;
         }
       `;
 		}
@@ -115,6 +149,12 @@
 
 		if (savedScheme !== null) {
 			currentTheme = savedScheme;
+		} else {
+			currentTheme = 'auto';
+		}
+
+		if (currentTheme === 'auto') {
+			applySystemTheme(mediaQuery.matches);
 		}
 
 		updateTheme();
@@ -200,6 +240,10 @@
 
 		.theme-switcher__button[aria-pressed='true'][value='dark'] ~ & {
 			transform: translateX(100%);
+		}
+
+		.theme-switcher__button[aria-pressed='true'][value='auto'] ~ & {
+			transform: translateX(0%);
 		}
 	}
 </style>

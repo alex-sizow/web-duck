@@ -33,7 +33,6 @@
 			}
 		}
 
-		// Обработчик изменения цветовой схемы системы
 		const listener = (event) => {
 			if (currentTheme === 'auto') {
 				applySystemTheme(event.matches);

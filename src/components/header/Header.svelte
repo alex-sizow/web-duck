@@ -1,5 +1,6 @@
 <script>
 	import ThemeSwitcher from '@/components/theme-switcher/theme-switcher.svelte';
+	import LanguageSwitcher from '@/components/language-switcher/language-switcher.svelte';
 </script>
 
 <header>
@@ -10,6 +11,7 @@
 			<li><a href="/projects">Projects</a></li>
 			<li><a href="/about">About</a></li>
 		</ul>
+		<LanguageSwitcher />
 		<ThemeSwitcher />
 	</nav>
 </header>

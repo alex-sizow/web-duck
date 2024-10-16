@@ -48,14 +48,17 @@
 			value={lang}
 			on:click={handleLanguageChange}
 		>
-			{i18next.t(`lang:${lang}`)}
+			{lang}
 		</button>
 	{/each}
+	<div class="language-switcher__status"></div>
 </section>
 
 <style>
 	.language-switcher {
+		position: relative;
 		display: inline-flex;
+		flex-direction: column;
 		gap: 8px;
 		padding: 4px;
 		border-radius: 24px;
@@ -71,7 +74,7 @@
 		font-size: 14px;
 		cursor: pointer;
 		transition: background-color 0.3s ease;
-
+		
 		&[aria-pressed='true'] {
 			background-color: var(--accent-color);
 			color: white;
@@ -80,5 +83,23 @@
 		&:hover {
 			background-color: rgba(var(--accent-color-rgb), 0.1);
 		}
+	}
+
+	.language-switcher__status {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		height: 2px;
+		background-color: var(--accent-color);
+		transition: transform 0.3s ease;
+	}
+
+	.language-switcher__button[aria-pressed='true'] ~ .language-switcher__status {
+		transform: translateY(0);
+	}
+
+	.language-switcher__button[aria-pressed='false'] ~ .language-switcher__status {
+		transform: translateY(100%);
 	}
 </style>

@@ -123,6 +123,7 @@
           --accent-color: #007bff;
           --theme-switcher-back: white;
           --theme-color: black;
+					--lang-color: blue;
         }
       `;
 		} else if (currentTheme === 'light') {
@@ -134,6 +135,7 @@
           --accent-color: #007bff;
         --theme-switcher-back: black;
           --theme-color: white;
+					--lang-color: red;
         }
       `;
 		}

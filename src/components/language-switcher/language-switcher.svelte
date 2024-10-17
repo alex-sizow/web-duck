@@ -57,8 +57,7 @@
 <style>
 	.language-switcher {
 		position: relative;
-		display: inline-flex;
-		flex-direction: column;
+		display: flex;
 		gap: 8px;
 		padding: 4px;
 		border-radius: 24px;
@@ -74,7 +73,7 @@
 		font-size: 14px;
 		cursor: pointer;
 		transition: background-color 0.3s ease;
-		
+
 		&[aria-pressed='true'] {
 			background-color: var(--accent-color);
 			color: white;
@@ -87,19 +86,20 @@
 
 	.language-switcher__status {
 		position: absolute;
-		bottom: 0;
-		left: 0;
-		width: 100%;
-		height: 2px;
-		background-color: var(--accent-color);
+		top: 0px;
+		left: 0px;
+		width: 30px;
+		height: 100%;
+		background-color: var(--lang-color);
 		transition: transform 0.3s ease;
+		border-radius: 24px;
 	}
 
 	.language-switcher__button[aria-pressed='true'] ~ .language-switcher__status {
-		transform: translateY(0);
+		transform: translateX(100%);
 	}
 
 	.language-switcher__button[aria-pressed='false'] ~ .language-switcher__status {
-		transform: translateY(100%);
+		transform: translateX(0%);
 	}
 </style>

@@ -1,0 +1,28 @@
+{
+  "header": {
+    "title": "Canard Web",
+    "nav": {
+      "home": "Accueil",
+      "about": "À propos",
+      "contact": "Contact"
+    },
+    "languageSwitcher": "Langue",
+    "themeSwitcher": "Thème"
+  },
+  "body": {
+    "welcome": "Bienvenue sur Canard Web !",
+    "description": "C'est une application Svelte d'exemple avec prise en charge de l'internationalisation.",
+    "features": {
+      "responsive": "Conception réactive",
+      "fast": "Performances rapides",
+      "secure": "Connexion sécurisée"
+    }
+  },
+  "footer": {
+    "copyright": "© {year} Canard Web. Tous droits réservés.",
+    "links": {
+      "privacy": "Politique de confidentialité",
+      "terms": "Conditions d'utilisation"
+    }
+  }
+}

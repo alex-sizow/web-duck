@@ -1,0 +1,28 @@
+{
+  "header": {
+    "title": "Web Duck",
+    "nav": {
+      "home": "Home",
+      "about": "About",
+      "contact": "Contact"
+    },
+    "languageSwitcher": "Language",
+    "themeSwitcher": "Theme"
+  },
+  "body": {
+    "welcome": "Welcome to Web Duck!",
+    "description": "This is a sample Svelte application with internationalization support.",
+    "features": {
+      "responsive": "Responsive Design",
+      "fast": "Fast Performance",
+      "secure": "Secure Connection"
+    }
+  },
+  "footer": {
+    "copyright": "© {year} Web Duck. All rights reserved.",
+    "links": {
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service"
+    }
+  }
+}
